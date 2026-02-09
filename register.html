@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celeste | Secure Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at center, #002b0f 0%, #000b02 70%, #000000 100%);
+            font-family: 'Inter', sans-serif;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .logo {
+            font-size: 35px;
+            font-weight: 900;
+            color: #00ff40;
+            text-align: center;
+            margin-top: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 10px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 255, 64, 0.1);
+            width: 100%;
+        }
+
+        .navbar a {
+            color: #00ff40;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 6px 10px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .navbar a.active { border-bottom: 3px solid #00ff40; }
+
+        .register-container {
+            width: 95%;
+            max-width: 480px;
+            margin: 30px auto 100px auto; 
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 255, 64, 0.2);
+            backdrop-filter: blur(15px);
+            border-radius: 24px;
+            padding: 35px 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            position: relative;
+            z-index: 10;
+        }
+
+        .main-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: white;
+            text-align: center;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .plan-selection-text {
+            font-size: 18px;
+            color: white;
+            text-align: center;
+            line-height: 1.5;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .plan-name {
+            font-size: 20px;
+            font-weight: 900;
+            color: #00ff40;
+            display: block;
+            margin-top: 5px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 1px solid rgba(0, 255, 64, 0.1);
+            border-radius: 15px;
+            background-color: #001a08;
+            color: white;
+            font-size: 17px;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border: 1px solid #00ff40;
+            background-color: #002b0f;
+        }
+        
+        .action-button {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #00ff40, #00cc33);
+            color: black;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(0, 255, 64, 0.3);
+            transition: all 0.3s;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        .action-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* TOP LEFT ACTIVITY FEED */
+        .activity-feed-container {
+            position: fixed;
+            top: 20px;
+            left: -400px;
+            z-index: 2100; 
+            width: 85%;
+            max-width: 320px;
+            padding: 10px 15px;
+            background: rgba(0, 11, 2, 0.98);
+            border: 1px solid #00ff40;
+            border-radius: 0 15px 15px 0;
+            box-shadow: 5px 5px 25px rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            transition: left 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            backdrop-filter: blur(15px);
+        }
+
+        .show-activity { left: 0px; }
+
+        .activity-icon { color: #00ff40; margin-right: 12px; font-size: 18px; flex-shrink: 0; }
+        .withdrawal-theme .activity-icon { color: #ff3e3e; }
+        .withdrawal-theme { border-color: #ff3e3e; }
+
+        #activity-text { flex-grow: 1; font-size: 12px; color: white; line-height: 1.3; }
+        .activity-user { color: #00ff40; font-weight: 700; }
+        .activity-amount { color: #00ff40; font-weight: 900; }
+        .withdrawal-theme .activity-user, .withdrawal-theme .activity-amount { color: #ff3e3e; }
+        .activity-time { color: #666; font-size: 10px; display: block; margin-top: 1px; }
+
+        .footer { text-align: center; padding: 25px 0; color: #444; font-size: 12px; text-transform: uppercase; margin-top: auto; }
+    </style>
+</head>
+<body>
+
+<!-- Notification Feed (Top Left) -->
+<div id="activity-feed" class="activity-feed-container">
+    <div class="activity-icon" id="act-icon"><i class="fas fa-circle-check"></i></div>
+    <div id="activity-text">Live activity monitoring active...</div>
+</div>
+
+<div class="logo">CELESTE</div>
+<div class="navbar">
+    <a href="index.html">Home</a>
+    <a href="reward.html">Rewards</a>
+    <a href="register.html" class="active">Register</a>
+</div>
+
+<div class="register-container">
+    <div class="main-title">Create Your Account</div>
+    
+    <div class="plan-selection-text">
+        Tier Selection:
+        <span id="selected-plan-display" class="plan-name">Loading...</span>
+    </div>
+
+    <form id="registration-form">
+        <div class="form-group">
+            <label for="full-name">Full Name</label>
+            <input type="text" id="full-name" placeholder="Enter your full name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Choose a unique username" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="you@example.com" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone-number">Phone Number</label>
+            <input type="tel" id="phone-number" placeholder="Enter phone number" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Create a strong password" required>
+        </div>
+
+        <button type="submit" id="submit-btn" class="action-button">CREATE ACCOUNT</button>
+    </form>
+</div>
+
+<div class="footer">&copy; 2026 CELESTE ECOSYSTEM</div>
+
+<script>
+const ACTIVITIES = [
+    { type: 'payment', name: "Olamide B.", amount: "₦8,500", loc: "Lagos", time: "2m ago", icon: "fa-shield-check" },
+    { type: 'withdrawal', name: "Emeka U.", amount: "₦45,000", loc: "Enugu", time: "just now", icon: "fa-arrow-trend-up" },
+    { type: 'payment', name: "Sarah J.", amount: "₦14,500", loc: "Abuja", time: "5m ago", icon: "fa-bolt" },
+    { type: 'withdrawal', name: "Yusuf K.", amount: "₦24,000", loc: "Kano", time: "1m ago", icon: "fa-wallet" },
+    { type: 'payment', name: "Blessing W.", amount: "₦14,500", loc: "Warri", time: "8m ago", icon: "fa-star" },
+    { type: 'withdrawal', name: "Tunde A.", amount: "₦56,000", loc: "Ibadan", time: "12m ago", icon: "fa-hand-holding-dollar" },
+    { type: 'payment', name: "Chioma N.", amount: "₦14,500", loc: "P-Harcourt", time: "3m ago", icon: "fa-shield-halved" },
+    { type: 'withdrawal', name: "Ibrahim D.", amount: "₦120,000", loc: "Kaduna", time: "15m ago", icon: "fa-money-check-dollar" },
+    { type: 'payment', name: "Gloria S.", amount: "₦8,500", loc: "Calabar", time: "6m ago", icon: "fa-circle-plus" },
+    { type: 'withdrawal', name: "David O.", amount: "₦36,000", loc: "Benin", time: "4m ago", icon: "fa-vault" }
+];
+
+let activityIndex = 0;
+
+function cycleActivity() {
+    const feed = document.getElementById('activity-feed');
+    const text = document.getElementById('activity-text');
+    const iconDiv = document.getElementById('act-icon');
+    const act = ACTIVITIES[activityIndex];
+
+    feed.classList.toggle('withdrawal-theme', act.type === 'withdrawal');
+    iconDiv.innerHTML = `<i class="fas ${act.icon}"></i>`;
+
+    let msg = act.type === 'payment' 
+        ? `<span class="activity-user">${act.name}</span> from ${act.loc} activated their <span class="activity-amount">${act.amount}</span> plan`
+        : `<span class="activity-user">${act.name}</span> from ${act.loc} successfully withdrawn <span class="activity-amount">${act.amount}</span>`;
+
+    text.innerHTML = `${msg}<span class="activity-time">${act.time}</span>`;
+    
+    feed.classList.add('show-activity');
+    
+    setTimeout(() => {
+        feed.classList.remove('show-activity');
+        activityIndex = (activityIndex + 1) % ACTIVITIES.length;
+        setTimeout(cycleActivity, 4000);
+    }, 7000);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Robust Plan Tracking
+    const planDisplay = document.getElementById('selected-plan-display');
+    const storedPlan = (localStorage.getItem('selectedPlan') || "").toLowerCase();
+    let displayPlan = "Euro-Lite ₦8,500";
+
+    // Check specifically for Max keywords
+    if (storedPlan.includes("max") || storedPlan.includes("14500") || storedPlan.includes("14,500")) {
+        displayPlan = "Euro-Max ₦14,500";
+    }
+    planDisplay.textContent = displayPlan;
+
+    const registrationForm = document.getElementById('registration-form');
+    const submitBtn = document.getElementById('submit-btn');
+
+    registrationForm.addEventListener('submit', function(e) {
+        e.preventDefault(); 
+        submitBtn.disabled = true;
+        submitBtn.textContent = "VERIFYING ACCOUNT...";
+
+        // Store user data
+        const userData = {
+            fullName: document.getElementById('full-name').value,
+            username: document.getElementById('username').value,
+            email: document.getElementById('email').value,
+            plan: displayPlan,
+            joinedDate: new Date().toLocaleDateString()
+        };
+        localStorage.setItem('celesteUser', JSON.stringify(userData));
+
+        setTimeout(() => {
+            window.location.href = 'dashboard.html';
+        }, 1500);
+    });
+
+    setTimeout(cycleActivity, 2000);
+});
+</script>
+</body>
+</html>
