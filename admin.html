@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Celeste</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px); }
+        input { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; transition: all 0.3s ease; }
+        input:focus { border-color: #00ff40 !important; outline: none; background: rgba(255,255,255,0.08) !important; }
+        .hidden { display: none; }
+        .loader { width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid #00ff40; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-6">
+
+    <div id="login-card" class="glass w-full max-w-sm rounded-[30px] p-8">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-black shadow-[0_0_15px_rgba(0,255,64,0.4)]"><i class="fas fa-lock"></i></div>
+            <h1 class="text-2xl font-black text-green-500 uppercase tracking-tighter">Admin Dashboard</h1>
+        </div>
+        <div class="space-y-4">
+            <input type="text" id="user" placeholder="Username" class="w-full p-4 rounded-xl outline-none">
+            <div class="relative">
+    <input 
+        type="password" 
+        id="pass" 
+        placeholder="Password" 
+        class="w-full p-4 pr-12 rounded-xl outline-none"
+    >
+    <i 
+        id="togglePass"
+        class="fas fa-eye absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer transition hover:text-green-500"
+    ></i>
+</div>
+            <button id="login-btn" onclick="handleLogin()" class="w-full bg-green-500 text-black font-black p-4 rounded-xl shadow-lg active:scale-95 transition">LOG IN</button>
+        </div>
+    </div>
+
+    <div id="dash-card" class="glass w-full max-w-2xl rounded-[30px] p-8 hidden my-10">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-xl font-black text-green-500 uppercase tracking-tight">Global Settings</h1>
+                <p class="text-[10px] text-gray-500 font-bold">NIGERIA • GHANA • CAMEROON</p>
+            </div>
+            <div class="bg-green-500/10 text-green-500 text-[10px] font-bold px-3 py-1 rounded-full border border-green-500/20 uppercase">Live Control</div>
+        </div>
+        
+        <div class="space-y-6">
+            
+            <div class="p-5 rounded-2xl border border-white/5 bg-white/5">
+                <p class="text-[10px] font-black text-green-500 uppercase mb-4 tracking-widest"><i class="fas fa-flag mr-1"></i> Nigeria Details</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest ml-1">Bank Name</label>
+                        <input type="text" id="ng-bank" class="w-full p-3 mt-1 rounded-xl text-sm" value="MONIEPOINT">
+                    </div>
+                    <div>
+                        <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest ml-1">Account Number</label>
+                        <input type="text" id="ng-num" class="w-full p-3 mt-1 rounded-xl text-sm" value="6637505379">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest ml-1">Account Name</label>
+                        <input type="text" id="ng-name" class="w-full p-3 mt-1 rounded-xl text-sm" value="GOD-GIFT GIFTED MEDIA">
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-5 rounded-2xl border border-white/5 bg-white/5">
+                <p class="text-[10px] font-black text-blue-400 uppercase mb-4 tracking-widest"><i class="fas fa-share-nodes mr-1"></i> Redirect Control</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest ml-1">Telegram Username/Link</label>
+                        <input type="text" id="tg-link" class="w-full p-3 mt-1 rounded-xl text-sm" value="@Gifted34">
+                    </div>
+                    <div>
+                        <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest ml-1">WhatsApp Number</label>
+                        <input type="text" id="wa-num" class="w-full p-3 mt-1 rounded-xl text-sm" value="09068854115">
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 pb-10">
+                <button onclick="handleUpdate()" id="up-btn" class="w-full bg-green-500 text-black font-black p-5 rounded-2xl transition hover:brightness-110 flex items-center justify-center gap-3">
+                    SAVE & UPDATE WEBSITE
+                </button>
+            </div>
+        </div>
+<script type="module">
+/* ================= FIREBASE IMPORTS ================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
+
+import {
+  getAuth,
+  signInAnonymously
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+/* ================= FIREBASE CONFIG ================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyC6nIxI9qratZatVZ1Bi5jV0vL86Nt37ws",
+  authDomain: "celeste-4d97f.firebaseapp.com",
+  projectId: "celeste-4d97f",
+  storageBucket: "celeste-4d97f.firebasestorage.app",
+  messagingSenderId: "706639090650",
+  appId: "1:706639090650:web:f43477bd0593887eece6e3",
+  measurementId: "G-RT9XET5HW8"
+};
+
+/* ================= INIT ================= */
+const app = initializeApp(firebaseConfig);
+getAnalytics(app);
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+const docRef = doc(db, "configs", "main");
+
+/* ================= LOGIN ================= */
+window.handleLogin = async () => {
+  const u = document.getElementById("user").value.trim();
+  const p = document.getElementById("pass").value.trim();
+
+  if (u !== "admin" || p !== "CELESTE") {
+    alert("Invalid Credentials");
+    return;
+  }
+  document.getElementById("login-card").classList.add("hidden");
+  document.getElementById("dash-card").classList.remove("hidden");
+
+  await initDash();
+};
+
+/* ================= LOAD DATA ================= */
+async function initDash() {
+  try {
+    await signInAnonymously(auth);
+
+    const snap = await getDoc(docRef);
+    if (!snap.exists()) return;
+
+    const d = snap.data();
+
+    document.getElementById("ng-bank").value = d.nigeriaBank || "";
+    document.getElementById("ng-num").value = d.nigeriaNumber || "";
+    document.getElementById("ng-name").value = d.nigeriaHolder || "";
+
+    document.getElementById("tg-link").value = d.telegramLink || "";
+    document.getElementById("wa-num").value = d.whatsappNum || "";
+
+  } catch (err) {
+    console.error(err);
+    alert("Firebase connection failed");
+  }
+}
+
+/* ================= SAVE ================= */
+window.handleUpdate = async () => {
+  const btn = document.getElementById("up-btn");
+  btn.disabled = true;
+  btn.innerHTML = `<div class="loader"></div> UPDATING...`;
+
+  try {
+    if (!auth.currentUser) await signInAnonymously(auth);
+
+    await setDoc(docRef, {
+      nigeriaBank: document.getElementById("ng-bank").value,
+      nigeriaNumber: document.getElementById("ng-num").value,
+      nigeriaHolder: document.getElementById("ng-name").value,
+
+      telegramLink: document.getElementById("tg-link").value,
+      whatsappNum: document.getElementById("wa-num").value,
+
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+
+    alert("Website Updated Successfully");
+
+  } catch (err) {
+    alert("Error: " + err.message);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = "SAVE & UPDATE WEBSITE";
+};
+
+const passInput = document.getElementById('pass');
+const toggleIcon = document.getElementById('togglePass');
+
+toggleIcon.addEventListener('click', () => {
+    if (passInput.type === "password") {
+        passInput.type = "text";
+        toggleIcon.classList.remove("fa-eye");
+        toggleIcon.classList.add("fa-eye-slash");
+    } else {
+        passInput.type = "password";
+        toggleIcon.classList.remove("fa-eye-slash");
+        toggleIcon.classList.add("fa-eye");
+    }
+});
+</script>
+</body>
+</html>
