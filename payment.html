@@ -238,14 +238,6 @@
                 document.getElementById('bank-name-display').innerText = cloudData.nigeriaBank || defaults.bank;
                 document.getElementById('db-number').innerText = cloudData.nigeriaNumber || defaults.number;
                 document.getElementById('account-name-display').innerText = cloudData.nigeriaHolder || defaults.holder;
-            } else if(selected === 'ghana') {
-                document.getElementById('bank-name-display').innerText = cloudData.ghanaBank || defaults.bank;
-                document.getElementById('db-number').innerText = cloudData.ghanaNumber || defaults.number;
-                document.getElementById('account-name-display').innerText = "MOBILE MONEY RECEIVER";
-            } else if(selected === 'cameroon') {
-                document.getElementById('bank-name-display').innerText = cloudData.cameroonBank || defaults.bank;
-                document.getElementById('db-number').innerText = cloudData.cameroonNumber || defaults.number;
-                document.getElementById('account-name-display').innerText = "MOBILE MONEY RECEIVER";
             }
         } else {
             document.getElementById('bank-name-display').innerText = defaults.bank;
