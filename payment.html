@@ -286,7 +286,7 @@
             let tg = vendorLink.startsWith('http') ? vendorLink : `https://t.me/${vendorLink.replace('@', '')}`;
             finalUrl = `${tg}?text=${msg}`;
         }
-        setTimeout(() => { window.location.href = finalUrl; }, 7000);
+        setTimeout(() => { window.location.href = finalUrl; }, 3000);
     };
 
     let sec = 600;
