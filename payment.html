@@ -275,26 +275,19 @@
     };
 
     window.handleRedirect = (platform) => {
-    document.getElementById('selection-modal').style.display = 'none';
-    document.getElementById('overlay').style.display = 'flex';
-
-    const message = encodeURIComponent(buildPaymentMessage());
-    let finalUrl = "";
-
-    if (platform === 'whatsapp') {
-        const cleanWA = whatsappNum.replace(/\D/g, '');
-        finalUrl = `https://wa.me/${cleanWA}?text=${message}`;
-    } else {
-        let tg = vendorLink.startsWith('http')
-            ? vendorLink
-            : `https://t.me/${vendorLink.replace('@', '')}`;
-        finalUrl = `${tg}?text=${message}`;
-    }
-
-    setTimeout(() => {
-        window.location.href = finalUrl;
-    }, 6000);
-};
+        document.getElementById('selection-modal').style.display = 'none';
+        document.getElementById('overlay').style.display = 'flex';
+        const msg = encodeURIComponent("Hello Celeste Merchant, I have made payment for my Celeste account activation. Here is my Receipt, Please confirm my payment.");
+        let finalUrl = "";
+        if(platform === 'whatsapp') {
+            const cleanWA = whatsappNum.replace(/\D/g, '');
+            finalUrl = `https://wa.me/${cleanWA}?text=${msg}`;
+        } else {
+            let tg = vendorLink.startsWith('http') ? vendorLink : `https://t.me/${vendorLink.replace('@', '')}`;
+            finalUrl = `${tg}?text=${msg}`;
+        }
+        setTimeout(() => { window.location.href = finalUrl; }, 7000);
+    };
 
     let sec = 600;
     setInterval(() => {
