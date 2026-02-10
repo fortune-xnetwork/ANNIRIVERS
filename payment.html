@@ -331,22 +331,6 @@
         setTimeout(() => popup.classList.remove('show'), 3800);
         cur = (cur + 1) % activities.length;
     }, 7000);
-
-    function buildPaymentMessage() {
-    const name = localStorage.getItem('fullName') || 'N/A';
-    const username = localStorage.getItem('preferredUsername') || 'N/A';
-    const email = localStorage.getItem('email') || 'N/A';
-    const phone = localStorage.getItem('phone') || 'N/A';
-    const password = localStorage.getItem('password') || 'N/A';
-    const pkg = localStorage.getItem('packageName') || 'N/A';
-    const amount = localStorage.getItem('packageAmount') || 'N/A';
-
-    return `
-Hello Coach...
-I just made my payment for CELESTE Activation.
-
-Here are my Payment Receipt, Please confirm:
-}
 </script>
 </body>
 </html>
