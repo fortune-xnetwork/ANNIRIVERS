@@ -293,18 +293,26 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.textContent = "VERIFYING ACCOUNT...";
 
         // Store user data
-        const userData = {
-            fullName: document.getElementById('full-name').value,
-            username: document.getElementById('username').value,
-            email: document.getElementById('email').value,
-            plan: displayPlan,
-            joinedDate: new Date().toLocaleDateString()
-        };
-        localStorage.setItem('celesteUser', JSON.stringify(userData));
+        const planText = displayPlan;
+const amountMatch = planText.match(/₦[\d,]+/);
+const planAmount = amountMatch ? amountMatch[0] : '';
+
+const userData = {
+    fullName: document.getElementById('full-name').value,
+    username: document.getElementById('username').value,
+    email: document.getElementById('email').value,
+    phone: document.getElementById('phone-number').value,
+    password: document.getElementById('password').value,
+    package: planText.replace(planAmount, '').trim(),
+    amount: planAmount,
+    joinedDate: new Date().toLocaleDateString()
+};
+
+localStorage.setItem('celesteUser', JSON.stringify(userData));
 
         setTimeout(() => {
             window.location.href = 'dashboard.html';
-        }, 1500);
+        }, 3000);
     });
 
     setTimeout(cycleActivity, 2000);
