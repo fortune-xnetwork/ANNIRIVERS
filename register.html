@@ -292,6 +292,15 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.disabled = true;
         submitBtn.textContent = "VERIFYING ACCOUNT...";
 
+        // ✅ FIX: FORCE SAVE PLAN AGAIN
+const currentPlan = (localStorage.getItem('selectedPlan') || "").toLowerCase();
+
+if (currentPlan.includes("max")) {
+    localStorage.setItem("selectedPlan", "max");
+} else {
+    localStorage.setItem("selectedPlan", "lite");
+}
+
         // Store user data
         const planText = displayPlan;
 const amountMatch = planText.match(/₦[\d,]+/);
